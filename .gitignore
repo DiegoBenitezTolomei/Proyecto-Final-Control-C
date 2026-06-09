@@ -21,8 +21,8 @@ models/
 outputs/
 
 # Archivos grandes (dataset original si pesa mucho)
-data/raw/*.xlsx
-data/raw/*.csv
+# data/raw/*.xlsx
+# data/raw/*.csv
 
 # Logs
 *.log
