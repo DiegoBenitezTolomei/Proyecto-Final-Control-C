@@ -1,4 +1,5 @@
 import json
+from xml.parsers.expat import model
 
 import joblib
 import pandas as pd
@@ -18,6 +19,7 @@ from src.config import (
     PREDICTIONS_FILE,
     TEST_FEATURES_FILE,
     TEST_TARGET_FILE,
+    THRESHOLD_FATAL,
 )
 from src.db import insert_model_results
 
@@ -36,6 +38,7 @@ def save_predictions(X_test, y_test, y_pred, y_proba):
     predictions["fatal_real"] = pd.Series(y_test).reset_index(drop=True)
     predictions["fatal_predicho"] = y_pred
     predictions["probabilidad_fatal"] = y_proba
+    predictions["umbral_decision"] = THRESHOLD_FATAL
 
     PREDICTIONS_FILE.parent.mkdir(parents=True, exist_ok=True)
     predictions.to_csv(PREDICTIONS_FILE, index=False)
@@ -44,20 +47,24 @@ def save_predictions(X_test, y_test, y_pred, y_proba):
 
 
 def evaluate_model():
+     # Cargar modelo entrenado
+    model = joblib.load(MODEL_FILE)
+
     # Cargar conjunto de prueba guardado desde train.py
     X_test = pd.read_csv(TEST_FEATURES_FILE)
     y_test = pd.read_csv(TEST_TARGET_FILE).squeeze()
 
-    # Cargar modelo entrenado
-    model = joblib.load(MODEL_FILE)
+    # Probabilidad de clase fatal
+    y_proba = model.predict_proba(X_test)[:, 1]
 
-    # Predicciones sobre test
-    y_pred = model.predict(X_test)
-    y_proba = get_positive_class_probability(model, X_test)
+    # Aplicar umbral de decisión elegido
+    y_pred = (y_proba >= THRESHOLD_FATAL).astype(int)
+
 
     predictions = save_predictions(X_test, y_test, y_pred, y_proba)
 
     metrics = {
+        "threshold_fatal": THRESHOLD_FATAL,
         "accuracy": float(accuracy_score(y_test, y_pred)),
         "precision": float(precision_score(y_test, y_pred, zero_division=0)),
         "recall": float(recall_score(y_test, y_pred, zero_division=0)),

@@ -65,7 +65,7 @@ def plot_confusion_matrix():
 
 
 def plot_class_balance():
-    df = pd.read_csv(PROCESSED_DATA_FILE)
+    df = pd.read_csv(PROCESSED_DATA_FILE, low_memory=False)
 
     class_counts = df["fatal"].value_counts().sort_index()
 

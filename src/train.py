@@ -5,7 +5,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import make_scorer, precision_score, recall_score, f1_score
+from sklearn.metrics import make_scorer, precision_score, recall_score, f1_score, fbeta_score
 from sklearn.model_selection import GridSearchCV, StratifiedKFold, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
@@ -28,9 +28,7 @@ from src.db import insert_model_config
 
 
 def load_processed_data():
-    """Carga el dataset procesado generado por preprocessing.py."""
-    return pd.read_csv(PROCESSED_DATA_FILE)
-
+    return pd.read_csv(PROCESSED_DATA_FILE, low_memory=False)
 
 def build_preprocessor():
     """Construye el preprocesador para variables numéricas y categóricas."""
@@ -174,7 +172,7 @@ def train_models():
         "accuracy": "accuracy",
         "precision": make_scorer(precision_score, zero_division=0),
         "recall": make_scorer(recall_score, zero_division=0),
-        "f1": make_scorer(f1_score, zero_division=0),
+        "f1": make_scorer(f1_score, zero_division=0)
     }
 
     grid_search = GridSearchCV(

@@ -155,6 +155,36 @@ Los resultados de validación cruzada se guardan en:
 outputs/metrics/cv_results.csv
 ```
 
+## Ajuste del umbral de decisión
+
+Además de seleccionar el mejor modelo mediante `GridSearchCV`, se analizó el umbral de decisión utilizado para convertir la probabilidad estimada de fatalidad en una clase final.
+
+Por defecto, muchos modelos clasifican como clase positiva cuando la probabilidad es mayor o igual a `0.50`. Sin embargo, en este problema la clase fatal es minoritaria y el costo de un falso negativo es alto, ya que representa un caso fatal que el modelo no detecta.
+
+Por ese motivo, se evaluaron distintos umbrales sobre la columna `probabilidad_fatal`. El objetivo fue reducir la cantidad de falsos negativos, aceptando un aumento controlado de falsos positivos.
+
+Para evitar elegir un umbral demasiado agresivo, se utilizó el siguiente criterio:
+
+```text
+Seleccionar el umbral con mayor Recall entre aquellos que mantienen una Precision mínima de 0.30.
+```
+
+Con ese criterio se seleccionó:
+
+```text
+THRESHOLD_FATAL = 0.20
+```
+
+Esto significa que el modelo clasifica un registro como fatal cuando:
+
+```text
+probabilidad_fatal >= 0.20
+```
+
+De esta forma, el modelo prioriza la detección de casos fatales sin utilizar un umbral excesivamente bajo como `0.05`, que aumentaba demasiado la cantidad de falsas alarmas.
+
+
+
 ---
 
 ## Desbalance de clases
@@ -186,25 +216,25 @@ outputs/metrics/metricas.json
 
 | Métrica | Valor |
 |---|---:|
-| Accuracy | 0.9936 |
-| Precision | 0.6833 |
-| Recall | 0.5816 |
-| F1-score | 0.6284 |
+| Accuracy | 0.9851 |
+| Precision | 0.3457 |
+| Recall | 0.6596 |
+| F1-score | 0.4537 |
 
 ### Matriz de confusión
 
 |  | Predicción no fatal | Predicción fatal |
 |---|---:|---:|
-| Real no fatal | 14.860 | 38 |
-| Real fatal | 59 | 82 |
+| Real no fatal | 14.722 | 176 |
+| Real fatal | 48 | 93 |
 
 ### Interpretación
 
 El modelo logra una Accuracy alta, pero esta métrica debe interpretarse con cuidado por el fuerte desbalance de clases.
 
-La Precision de **0.6833** indica que, cuando el modelo predice fatalidad, una parte importante de esas predicciones corresponde efectivamente a casos fatales. El Recall de **0.5816** muestra que el modelo detecta 82 de 141 casos fatales presentes en el conjunto de prueba. Sin embargo, todavía quedan 59 falsos negativos, es decir, casos fatales clasificados como no fatales.
+La Precision de **0.3457** indica que, cuando el modelo predice fatalidad, una parte de esas predicciones corresponde efectivamente a casos fatales. El Recall de **0.6596** muestra que el modelo detecta 93 de 141 casos fatales presentes en el conjunto de prueba. Todavía quedan 48 falsos negativos, es decir, casos fatales clasificados como no fatales.
 
-El F1-score de **0.6284** resume el equilibrio entre Precision y Recall para la clase fatal.
+El F1-score de **0.4537** resume el equilibrio entre Precision y Recall para la clase fatal luego de aplicar el umbral de decisión `THRESHOLD_FATAL = 0.20`.
 
 ---
 
@@ -418,13 +448,13 @@ El modelo actual permite construir una primera solución predictiva, pero todav�
 - El dataset está fuertemente desbalanceado.
 - Se usan pocas variables explicativas.
 - El dataset está a nivel víctima, no estrictamente a nivel accidente.
-- No se realizó ajuste del umbral de clasificación.
+- El umbral de decisión fue ajustado para priorizar la detección de casos fatales, aunque esto implica aceptar más falsos positivos.
 
 Posibles mejoras:
 
 - Agrupar la información a nivel accidente para responder exactamente al enunciado.
 - Incorporar más variables del siniestro.
-- Ajustar el umbral de clasificación para priorizar Recall.
+- Seguir evaluando otros criterios de selección de umbral según el costo relativo de falsos negativos y falsos positivos.
 - Probar técnicas específicas para desbalance, como SMOTE o submuestreo.
 - Comparar más modelos.
 - Analizar curvas ROC y Precision-Recall.
