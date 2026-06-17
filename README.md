@@ -78,7 +78,12 @@ El script `src/preprocessing.py` realiza las siguientes tareas:
 | `dia_semana` | Numérica | Día de la semana del siniestro |
 | `sexo_victima` | Categórica | Sexo de la víctima |
 | `modo_desplazamiento_victima` | Categórica | Forma de desplazamiento de la víctima |
-| `rol_victima` | Categórica | Rol de la víctima en el siniestro |
+| `rol_victima` | Categórica | Rol de la víctima en el siniestro | 
+  `tipo_de_auto` | Categórica | Tipo de auto en el siniestro |
+  `clima` | Categórica | Rol del clima en el siniestro |
+  `entorno` | Categórica | Entorno del siniestro|
+  `factor_humano` | Categórica | Rol de la víctima en el siniestro |
+  `factor_vehiculo` | Categórica | falla de vehiculo en el siniestro |
 
 **Variable objetivo:**
 
