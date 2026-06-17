@@ -31,7 +31,8 @@ NUMERIC_FEATURES = ["anio", "edad_victima", "mes", "dia_semana"]
 CATEGORICAL_FEATURES = [
     "sexo_victima",
     "modo_desplazamiento_victima",
-    "rol_victima"
+    "rol_victima", 
+    "clima"
 ]
 
 RANDOM_STATE = 42

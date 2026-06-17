@@ -1,6 +1,7 @@
 from pathlib import Path
 import joblib
 import pandas as pd
+from src.config import NUMERIC_FEATURES, CATEGORICAL_FEATURES
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -31,15 +32,9 @@ casos_fatales = df_test[df_test["fatal_real"] == 1].sample(
 
 casos = pd.concat([casos_no_fatales, casos_fatales])
 
-FEATURES = [
-    "anio",
-    "edad_victima",
-    "mes",
-    "dia_semana",
-    "sexo_victima",
-    "modo_desplazamiento_victima",
-    "rol_victima",
-]
+
+FEATURES = NUMERIC_FEATURES + CATEGORICAL_FEATURES
+
 
 for i, fila in casos.iterrows():
     X_nuevo = pd.DataFrame([fila[FEATURES]])

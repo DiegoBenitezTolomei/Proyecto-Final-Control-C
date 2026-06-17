@@ -489,7 +489,6 @@ Posibles mejoras:
 - Visualizaciones generadas.
 - MongoDB integrado con manejo de error si el servicio no está activo.
 - Notebooks incluidos como respaldo exploratorio y experimental.
-- `src/data.py` eliminado por estar de más.
 
 ---
 

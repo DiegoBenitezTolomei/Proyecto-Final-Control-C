@@ -1,5 +1,5 @@
 import pandas as pd
-from src.config import RAW_DATA_FILE, PROCESSED_DATA_FILE
+from src.config import RAW_DATA_FILE, PROCESSED_DATA_FILE, TARGET_COLUMN, CATEGORICAL_FEATURES, NUMERIC_FEATURES
 from src.db import insert_processed_data
 
 
@@ -55,17 +55,10 @@ def preprocess_data(df):
             errors="coerce"
         )
 
+    FEATURES = NUMERIC_FEATURES + CATEGORICAL_FEATURES
+
     # Seleccionar columnas finales para el modelo
-    columnas_modelo = [
-        "anio",
-        "edad_victima",
-        "sexo_victima",
-        "modo_desplazamiento_victima",
-        "rol_victima",
-        "mes",
-        "dia_semana",
-        "fatal"
-    ]
+    columnas_modelo = FEATURES + [TARGET_COLUMN]
 
     # Quedarse solo con las columnas que existen
     columnas_existentes = [col for col in columnas_modelo if col in df.columns]
