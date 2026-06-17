@@ -32,7 +32,11 @@ CATEGORICAL_FEATURES = [
     "sexo_victima",
     "modo_desplazamiento_victima",
     "rol_victima", 
-    "clima"
+    "clima",
+    "entorno",
+    "factor_humano",
+    "factor_vehiculo",
+    "tipo_auto",
 ]
 
 RANDOM_STATE = 42
